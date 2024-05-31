@@ -48,7 +48,7 @@
   },
   "devDependencies": {
     "@babel/plugin-proposal-private-property-in-object": "^7.21.11",
-    "chai": "^4.4.1",
+    "chai": "^5.1.1",
     "chai-http": "^4.3.0",
     "concurrently": "^6.5.1",
     "dotenv": "^16.4.5",
