@@ -1,0 +1,44 @@
+# Example configuration for labeler.yml
+
+# Label for changes in Python files
+python:
+  - '**/*.py'
+
+# Label for changes in JavaScript files
+javascript:
+  - '**/*.js'
+  - '**/*.jsx'
+
+# Label for changes in HTML files
+html:
+  - '**/*.html'
+
+# Label for changes in CSS files
+css:
+  - '**/*.css'
+  - '**/*.scss'
+
+# Label for changes in documentation files
+documentation:
+  - '**/*.md'
+  - '**/*.rst'
+  - 'docs/**'
+
+# Label for changes in configuration files
+configuration:
+  - '.github/**'
+  - '**/*.yml'
+  - '**/*.yaml'
+
+# Label for changes in specific directories
+frontend:
+  - 'frontend/**'
+
+backend:
+  - 'backend/**'
+
+# Label for changes in test files
+tests:
+  - 'tests/**'
+  - '**/test_*.py'
+  - '**/*.spec.js'
