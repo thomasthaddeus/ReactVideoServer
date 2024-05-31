@@ -19,4 +19,13 @@ jobs:
     steps:
     - uses: actions/labeler@v5
       with:
-        repo-token: "${{ secrets.GITHUB_TOKEN }}"
+        # The GitHub token used to manage labels
+        # The path for the label configurations
+        configuration-path: true  # optional, default is .github/labeler.yml
+        # Whether or not to remove labels when matching files are reverted
+        sync-labels: true  # optional
+        # Whether or not to auto-include paths starting with dot (e.g. `.github`)
+        dot: true  # optional, default is true
+        # The pull request number(s)
+        # pr-number:  # optional
+        repo-token: "${{ secrets.GITHUB_TOKEN }}"  # optional, default is ${{ github.token }}

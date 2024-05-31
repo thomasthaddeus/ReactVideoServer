@@ -1,13 +1,6 @@
 name: Auto Merge Dependabot PRs
 
 on:
-  # schedule:
-  #   - cron: '0 0 * * *' # Runs daily at midnight UTC
-
-  push:
-    branches:
-      - dependabot/**
-
   pull_request:
     branches:
       - main
@@ -16,24 +9,22 @@ on:
       - synchronize
       - reopened
 
-  workflow_dispatch:
-
 jobs:
   auto-merge:
     runs-on: ubuntu-latest
 
+    if: github.actor == 'dependabot[bot]'
+
     steps:
       - name: Checkout
-        if: github.actor == 'dependabot[bot]'
         uses: actions/checkout@v4
 
       - name: Merge Dependabot PRs into main
-        if: github.actor == 'dependabot[bot]'
         run: |
           git config --global user.name "github-actions[bot]"
           git config --global user.email "github-actions[bot]@users.noreply.github.com"
           git checkout main
-          git merge --no-ff ${{ github.event.pull_request.head.sha || github.event.after }}
+          git merge --no-ff ${{ github.event.pull_request.head.sha }}
           git push origin main
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
