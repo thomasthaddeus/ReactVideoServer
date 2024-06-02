@@ -1,0 +1,53 @@
+name: Push Dist to Dist Branch
+
+on:
+  push:
+    paths:
+      - 'dist/**'
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout the repository
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js (optional, if needed for your build)
+        uses: actions/setup-node@v4
+        with:
+          node-version: latest
+
+      - name: Install dependencies (optional, if needed for your build)
+        run: npm install
+
+      - name: Build the project (optional, if needed for your build)
+        run: npm run build
+
+      - name: Push dist folder to dist branch
+        run: |
+          # Configure Git
+          git config --global user.name 'github-actions[bot]'
+          git config --global user.email 'github-actions[bot]@users.noreply.github.com'
+
+          # Check if dist branch exists
+          if git ls-remote --exit-code --heads origin dist; then
+            git checkout dist
+          else
+            git checkout --orphan dist
+          fi
+
+          # Clear the branch
+          git rm -rf .
+
+          # Copy the contents of the dist folder
+          cp -r dist/* .
+
+          # Add all files
+          git add .
+
+          # Commit changes
+          git commit -m "Update dist folder"
+
+          # Push changes to dist branch
+          git push origin dist --force

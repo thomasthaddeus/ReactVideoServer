@@ -1,7 +1,7 @@
 // App.js
 /** @jsxImportSource @emotion/react */
 import { useState } from 'react';
-import data from './data';
+import data from '../../server/data/data';
 import {
   containerStyle,
   cardStyle,

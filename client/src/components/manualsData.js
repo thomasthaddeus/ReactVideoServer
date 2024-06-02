@@ -763,8 +763,29 @@ const manualsData = [
         ]
       },
       {
+        name: "1911",
+        link: "./docs/schematics/1911.PDF"
+      },
+      {
         name: "3074-Enfield Rifles",
         link: "./docs/schematics/3074-EnfieldRifles.pdf"
+      },
+      {
+        name: "3354-Trigger Job AR15",
+        files: [
+          {
+            name: "ar-15 semiautomatic rifle & carbine",
+            link: "./docs/schematics/3354-TriggerJobAR15/ar-15 semiautomatic rifle & carbine.pdf"
+          },
+          {
+            name: "AR15-A2 Diagram & Parts List",
+            link: "./docs/schematics/3354-TriggerJobAR15/AR15-A2 Diagram & Parts List.pdf"
+          }
+        ]
+      },
+      {
+        name: "Exploded Diagram",
+        link: "./docs/schematics/ExplodedDiagram.pdf"
       },
       {
         name: "H&K",
@@ -783,6 +804,14 @@ const manualsData = [
   {
     category: "Extras",
     files: [
+      {
+        name: "AGIMini Catalog-2009",
+        link: "./docs/extras/AGIMiniCatalog-2009.pdf"
+      },
+      {
+        name: "Course Notes",
+        link: "./docs/extras/CourseNotes.pdf"
+      },
       {
         name: "Mini Catalog-2011",
         link: "./docs/extras/MiniCatalog-2011.pdf"
