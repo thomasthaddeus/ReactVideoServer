@@ -3,7 +3,7 @@ const fs = require('fs');
 const path = require('path');
 
 const rootDir = '../docs';
-const outputFilePath = path.join(__dirname, '../../src/components/manualsData.js');
+const outputFilePath = path.join(__dirname, '../components/manualsData.js');
 
 // Function to convert file name to a more readable format
 function formatName(fileName) {
