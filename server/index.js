@@ -3,11 +3,17 @@
 const path = require("path");
 const express = require("express");
 const dotenv = require("dotenv");
+const RateLimit = require("express-rate-limit");
 
 dotenv.config();
 
 const app = express();
 const port = process.env.PORT || 3001;
+
+const mediaRateLimiter = RateLimit({
+  windowMs: 15 * 60 * 1000, // 15 minutes
+  max: 100, // limit each IP to 100 requests per windowMs
+});
 
 const videoBasePath = process.env.VIDEO_BASE_PATH
   ? path.resolve(__dirname, process.env.VIDEO_BASE_PATH)
@@ -25,7 +31,7 @@ if (!videoBasePath || !thumbnailBasePath) {
 
 app.use(express.static(path.resolve(__dirname, "public")));
 
-app.get("/video", (req, res) => {
+app.get("/video", mediaRateLimiter, (req, res) => {
   if (!req.query.video) {
     return res.status(400).send("Video query parameter is required");
   }
@@ -45,7 +51,7 @@ app.get("/video", (req, res) => {
   });
 });
 
-app.get("/thumbnail", (req, res) => {
+app.get("/thumbnail", mediaRateLimiter, (req, res) => {
   if (!req.query.video) {
     return res.status(400).send("Video query parameter is required");
   }
