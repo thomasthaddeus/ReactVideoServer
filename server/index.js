@@ -56,9 +56,18 @@ app.get("/thumbnail", mediaRateLimiter, (req, res) => {
     return res.status(400).send("Video query parameter is required");
   }
 
-  const thumbnailPath = path.join(thumbnailBasePath, req.query.video);
+  const requestedThumbnailPath = path.resolve(thumbnailBasePath, req.query.video);
 
-  res.sendFile(thumbnailPath, (err) => {
+  // Ensure the resolved path is within the configured thumbnail base directory
+  const normalizedThumbnailBasePath = path.resolve(thumbnailBasePath) + path.sep;
+  if (
+    requestedThumbnailPath !== path.resolve(thumbnailBasePath) &&
+    !requestedThumbnailPath.startsWith(normalizedThumbnailBasePath)
+  ) {
+    return res.status(403).send("Invalid thumbnail path");
+  }
+
+  res.sendFile(requestedThumbnailPath, (err) => {
     if (err) {
       if (!res.headersSent) {
         res.status(404).send("Thumbnail not found");
