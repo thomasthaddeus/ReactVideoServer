@@ -1,0 +1,19 @@
+{
+  "name": "my-react-video-server-server",
+  "version": "0.2.0",
+  "main": "index.js",
+  "private": true,
+  "scripts": {
+    "start": "nodemon src/index.js",
+    "test": "mocha test/**/*.test.js"
+  },
+  "dependencies": {
+    "dotenv": "^17.4.2",
+    "express": "^5.2.1"
+  },
+  "devDependencies": {
+    "mocha": "^11.7.5",
+    "nodemon": "^3.1.14",
+    "supertest": "^7.2.2"
+  }
+}

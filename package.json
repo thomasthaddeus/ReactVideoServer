@@ -1,0 +1,14 @@
+{
+  "name": "video-server-stack",
+  "version": "1.1.0",
+  "private": true,
+  "scripts": {
+    "client": "npm start --prefix client",
+    "server": "nodemon server/src/index.js",
+    "dev": "concurrently \"npm run server\" \"npm run client\""
+  },
+  "devDependencies": {
+    "concurrently": "^9.2.1",
+    "nodemon": "^3.1.14"
+  }
+}
