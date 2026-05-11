@@ -3,6 +3,7 @@ import { render, fireEvent, screen, within } from '@testing-library/react';
 import '@testing-library/jest-dom';
 import { afterEach, beforeEach, vi } from 'vitest';
 import App from './App';
+import catalog from '../../server/src/data/catalog.json';
 
 beforeEach(() => {
   const storage = new Map();
@@ -16,6 +17,19 @@ beforeEach(() => {
       setItem: vi.fn((key, value) => storage.set(key, String(value))),
     },
   });
+  vi.stubGlobal('fetch', vi.fn((url) => {
+    if (String(url).endsWith('/catalog')) {
+      return Promise.resolve({
+        ok: true,
+        json: () => Promise.resolve(catalog),
+      });
+    }
+
+    return Promise.resolve({
+      ok: true,
+      json: () => Promise.resolve({ status: 'ok' }),
+    });
+  }));
 });
 
 afterEach(() => {
@@ -37,20 +51,26 @@ function stubMobileViewport(matches = true) {
   })));
 }
 
-test('renders the section title', () => {
-  render(<App />);
+async function renderApp() {
+  const result = render(<App />);
+  await screen.findByText(/108 of 108 videos/i);
+  return result;
+}
+
+test('renders the section title', async () => {
+  await renderApp();
   const titleElement = screen.getAllByText(/Section 5/i)[0];
   expect(titleElement).toBeInTheDocument();
 });
 
-test('renders video cards', () => {
-  render(<App />);
+test('renders video cards', async () => {
+  await renderApp();
   const videoCards = screen.getAllByRole('img');
   expect(videoCards.length).toBeGreaterThan(0);
 });
 
-test('filters video cards from search input', () => {
-  render(<App />);
+test('filters video cards from search input', async () => {
+  await renderApp();
   fireEvent.change(screen.getByLabelText(/search videos/i), {
     target: { value: 'rebarrel' },
   });
@@ -59,8 +79,8 @@ test('filters video cards from search input', () => {
   expect(screen.getAllByRole('button', { name: /play rebarrel/i })).toHaveLength(2);
 });
 
-test('filters video cards from sidebar categories', () => {
-  render(<App />);
+test('filters video cards from sidebar categories', async () => {
+  await renderApp();
   fireEvent.click(screen.getByRole('button', {
     name: /filter by section section 5 - centerfire rifles/i,
   }));
@@ -73,8 +93,18 @@ test('filters video cards from sidebar categories', () => {
   expect(screen.queryByRole('button', { name: /play rebarrel & blueprint part 1/i })).not.toBeInTheDocument();
 });
 
-test('combines search and sidebar category filters', () => {
-  render(<App />);
+test('filters video cards by generated course metadata', async () => {
+  await renderApp();
+  fireEvent.click(screen.getByRole('button', {
+    name: /filter by course 3284-rebarrel & blueprint/i,
+  }));
+
+  expect(screen.getAllByRole('button', { name: /play rebarrel & blueprint/i })).toHaveLength(2);
+  expect(screen.queryByRole('button', { name: /play introduction part a/i })).not.toBeInTheDocument();
+});
+
+test('combines search and sidebar category filters', async () => {
+  await renderApp();
   fireEvent.click(screen.getByRole('button', {
     name: /filter by topic final blueprint/i,
   }));
@@ -88,8 +118,8 @@ test('combines search and sidebar category filters', () => {
   expect(screen.queryByRole('button', { name: /play rebarrel & blueprint part 1/i })).not.toBeInTheDocument();
 });
 
-test('expands manual categories with disclosure buttons', () => {
-  render(<App />);
+test('expands manual categories with disclosure buttons', async () => {
+  await renderApp();
   const schematicsButton = screen.getByRole('button', { name: /schematics/i });
 
   expect(schematicsButton).toHaveAttribute('aria-expanded', 'false');
@@ -99,8 +129,8 @@ test('expands manual categories with disclosure buttons', () => {
   expect(screen.getByRole('link', { name: /1014dl-colt1911-gun schematics/i })).toBeInTheDocument();
 });
 
-test('searches manual names and expands matching parent groups', () => {
-  render(<App />);
+test('searches manual names and expands matching parent groups', async () => {
+  await renderApp();
   fireEvent.change(screen.getByLabelText(/search manuals/i), {
     target: { value: 'Beretta92FS' },
   });
@@ -111,8 +141,8 @@ test('searches manual names and expands matching parent groups', () => {
   expect(screen.getByRole('link', { name: /beretta92fs/i })).toBeInTheDocument();
 });
 
-test('searches manual paths', () => {
-  render(<App />);
+test('searches manual paths', async () => {
+  await renderApp();
   fireEvent.change(screen.getByLabelText(/search manuals/i), {
     target: { value: 'ruger_mk3.pdf' },
   });
@@ -120,9 +150,9 @@ test('searches manual paths', () => {
   expect(screen.getByRole('link', { name: /ruger_mk3/i })).toBeInTheDocument();
 });
 
-test('closes mobile sidebar when a top nav target is selected', () => {
+test('closes mobile sidebar when a top nav target is selected', async () => {
   stubMobileViewport(true);
-  render(<App />);
+  await renderApp();
 
   expect(document.querySelector('aside')).toHaveAttribute('aria-hidden', 'false');
   fireEvent.click(screen.getByRole('link', { name: /^videos$/i }));
@@ -130,9 +160,9 @@ test('closes mobile sidebar when a top nav target is selected', () => {
   expect(document.querySelector('aside')).toHaveAttribute('aria-hidden', 'true');
 });
 
-test('closes mobile sidebar when a manual is selected', () => {
+test('closes mobile sidebar when a manual is selected', async () => {
   stubMobileViewport(true);
-  render(<App />);
+  await renderApp();
 
   fireEvent.click(screen.getByRole('button', { name: /schematics/i }));
   fireEvent.click(screen.getByRole('link', { name: /1014dl-colt1911-gun schematics/i }));
@@ -140,15 +170,15 @@ test('closes mobile sidebar when a manual is selected', () => {
   expect(document.querySelector('aside')).toHaveAttribute('aria-hidden', 'true');
 });
 
-test('closes mobile sidebar from the drawer backdrop', () => {
-  render(<App />);
+test('closes mobile sidebar from the drawer backdrop', async () => {
+  await renderApp();
   fireEvent.click(document.querySelector('button[aria-label="Close sidebar"]'));
 
   expect(document.querySelector('aside')).toHaveAttribute('aria-hidden', 'true');
 });
 
-test('shows thumbnail fallback when an image fails to load', () => {
-  render(<App />);
+test('shows thumbnail fallback when an image fails to load', async () => {
+  await renderApp();
   fireEvent.error(screen.getAllByRole('img')[0]);
 
   expect(screen.getByRole('img', { name: /thumbnail unavailable/i })).toBeInTheDocument();
@@ -156,8 +186,17 @@ test('shows thumbnail fallback when an image fails to load', () => {
 });
 
 test('shows server unavailable message after repeated media failures', async () => {
-  vi.stubGlobal('fetch', vi.fn().mockRejectedValue(new Error('offline')));
-  render(<App />);
+  fetch.mockImplementation((url) => {
+    if (String(url).endsWith('/catalog')) {
+      return Promise.resolve({
+        ok: true,
+        json: () => Promise.resolve(catalog),
+      });
+    }
+
+    return Promise.reject(new Error('offline'));
+  });
+  await renderApp();
   const thumbnails = screen.getAllByRole('img').slice(0, 3);
 
   thumbnails.forEach((thumbnail) => fireEvent.error(thumbnail));
@@ -165,8 +204,8 @@ test('shows server unavailable message after repeated media failures', async () 
   expect(await screen.findByText(/media server appears to be unavailable/i)).toBeInTheDocument();
 });
 
-test('shows video loading and error states in the player modal', () => {
-  render(<App />);
+test('shows video loading and error states in the player modal', async () => {
+  await renderApp();
   fireEvent.click(screen.getAllByRole('img')[0]);
 
   expect(screen.getByText(/loading video/i)).toBeInTheDocument();
@@ -178,8 +217,8 @@ test('shows video loading and error states in the player modal', () => {
   expect(screen.getByRole('alert')).toHaveTextContent(/video could not be loaded/i);
 });
 
-test('moves between videos from the player modal', () => {
-  render(<App />);
+test('moves between videos from the player modal', async () => {
+  await renderApp();
   fireEvent.click(screen.getByRole('button', { name: /play rebarrel & blueprint part 1/i }));
   let dialog = screen.getByRole('dialog');
 
@@ -194,8 +233,8 @@ test('moves between videos from the player modal', () => {
   expect(screen.getByRole('button', { name: /previous/i })).not.toBeDisabled();
 });
 
-test('returns focus to the originating card when the player closes', () => {
-  render(<App />);
+test('returns focus to the originating card when the player closes', async () => {
+  await renderApp();
   const card = screen.getByRole('button', { name: /play rebarrel & blueprint part 1/i });
 
   fireEvent.click(card);
@@ -204,8 +243,8 @@ test('returns focus to the originating card when the player closes', () => {
   expect(card).toHaveFocus();
 });
 
-test('traps tab focus inside the player modal', () => {
-  render(<App />);
+test('traps tab focus inside the player modal', async () => {
+  await renderApp();
   fireEvent.click(screen.getByRole('button', { name: /play rebarrel & blueprint part 1/i }));
   const closeButton = screen.getByRole('button', { name: /close video player/i });
   const videoElement = document.querySelector('video');
@@ -216,8 +255,8 @@ test('traps tab focus inside the player modal', () => {
   expect(closeButton).toHaveFocus();
 });
 
-test('persists and resumes the last watched video', () => {
-  render(<App />);
+test('persists and resumes the last watched video', async () => {
+  await renderApp();
   fireEvent.click(screen.getByRole('button', { name: /play rebarrel & blueprint part 1/i }));
   fireEvent.click(screen.getByRole('button', { name: /close video player/i }));
 
@@ -232,16 +271,16 @@ test('persists and resumes the last watched video', () => {
   })).toBeInTheDocument();
 });
 
-test('opens video player on thumbnail click', () => {
-  const { container } = render(<App />);
+test('opens video player on thumbnail click', async () => {
+  const { container } = await renderApp();
   const thumbnail = screen.getAllByRole('img')[0];
   fireEvent.click(thumbnail);
   const videoElement = container.querySelector('video');
   expect(videoElement).toBeInTheDocument();
 });
 
-test('closes video player on close button click', () => {
-  const { container } = render(<App />);
+test('closes video player on close button click', async () => {
+  const { container } = await renderApp();
   const thumbnail = screen.getAllByRole('img')[0];
   fireEvent.click(thumbnail);
   const closeButton = screen.getByRole('button', { name: /close video player/i });

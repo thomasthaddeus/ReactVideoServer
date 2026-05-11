@@ -26,6 +26,25 @@ describe('Video and Thumbnail Endpoints', () => {
       .expect('content-type', /image\/png/);
   });
 
+  it('returns the generated catalog', async () => {
+    const response = await request(app)
+      .get('/catalog')
+      .expect(200)
+      .expect('content-type', /json/);
+
+    if (response.body.title !== 'Video Library') {
+      throw new Error('Expected catalog title');
+    }
+
+    if (!Array.isArray(response.body.sections) || response.body.sections.length === 0) {
+      throw new Error('Expected catalog sections');
+    }
+
+    if (!Object.prototype.hasOwnProperty.call(response.body.sections[0], 'fileSizeBytes')) {
+      throw new Error('Expected catalog metadata');
+    }
+  });
+
   it('returns 404 for a missing video file', async () => {
     await request(app)
       .get('/video')

@@ -12,6 +12,7 @@ import {
 
 const FILTER_GROUPS = [
   { key: 'sections', title: 'Sections', singular: 'section' },
+  { key: 'courses', title: 'Courses', singular: 'course' },
   { key: 'topics', title: 'Topics', singular: 'topic' },
   { key: 'mediaTypes', title: 'Media Type', singular: 'media type' },
 ];

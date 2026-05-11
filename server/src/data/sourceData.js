@@ -1,4 +1,4 @@
-// src/data.js
+// Curated catalog source. Run `npm run generate:catalog --prefix server` after edits.
 
 const data = {
   title: "Video Library",
@@ -870,4 +870,4 @@ const data = {
   ]
 };
 
-export default data;
+module.exports = data;

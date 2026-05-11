@@ -1,4 +1,5 @@
 const express = require('express');
+const catalog = require('../data/catalog.json');
 const { resolveMediaFile } = require('../services/mediaLibrary');
 
 function createMediaRouter({ videosPath, thumbnailsPath }) {
@@ -30,6 +31,10 @@ function createMediaRouter({ videosPath, thumbnailsPath }) {
         res.status(404).send('Thumbnail not found');
       }
     });
+  });
+
+  router.get('/catalog', (req, res) => {
+    res.json(catalog);
   });
 
   return router;

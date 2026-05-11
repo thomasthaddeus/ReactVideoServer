@@ -4,6 +4,7 @@
   "main": "index.js",
   "private": true,
   "scripts": {
+    "generate:catalog": "node scripts/generateCatalog.js",
     "start": "nodemon src/index.js",
     "test": "mocha test/**/*.test.js"
   },

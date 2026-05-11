@@ -1,7 +1,6 @@
 // App.js
 /** @jsxImportSource @emotion/react */
 import { useEffect, useMemo, useRef, useState } from 'react';
-import data from './data/data';
 import {
   pageStyle,
   mainContentStyle,
@@ -41,13 +40,14 @@ import Sidebar from './components/Sidebar';
 import Manuals from './components/Manuals';
 import VideoFilters from './components/VideoFilters';
 import Footer from './components/Footer';
+import { fetchCatalog, serverBaseUrl } from './services/catalog';
 
-const serverBaseUrl = import.meta.env.VITE_SERVER_BASE_URL || 'http://localhost:3001';
 const mediaFailureWarningThreshold = 3;
 const lastWatchedStorageKey = 'video-library:last-watched';
-const emptyFilters = { sections: [], topics: [], mediaTypes: [] };
+const emptyFilters = { sections: [], courses: [], topics: [], mediaTypes: [] };
 const filterGroupLabels = {
   sections: 'Section',
+  courses: 'Course',
   topics: 'Topic',
   mediaTypes: 'Type',
 };
@@ -87,34 +87,39 @@ function mapCountsToOptions(counts, labelFormatter = (value) => value) {
 
 function buildFilterOptions(videoSections) {
   const sectionCounts = new Map();
+  const courseCounts = new Map();
   const topicCounts = new Map();
   const mediaTypeCounts = new Map();
 
   videoSections.forEach((section) => {
-    addCount(sectionCounts, section.subheading);
-    addCount(mediaTypeCounts, getMediaType(section.link));
+    addCount(sectionCounts, section.section || section.subheading);
+    addCount(courseCounts, section.course);
+    addCount(mediaTypeCounts, section.mediaType || getMediaType(section.link));
     (section.topics || []).forEach((topic) => addCount(topicCounts, topic));
   });
 
   return {
     sections: mapCountsToOptions(sectionCounts),
+    courses: mapCountsToOptions(courseCounts),
     topics: mapCountsToOptions(topicCounts),
     mediaTypes: mapCountsToOptions(mediaTypeCounts, (value) => value.toUpperCase()),
   };
 }
 
 function matchesSelectedFilters(section, selectedFilters) {
-  const mediaType = getMediaType(section.link);
+  const mediaType = section.mediaType || getMediaType(section.link);
   const sectionTopics = section.topics || [];
 
   const matchesSection = selectedFilters.sections.length === 0
-    || selectedFilters.sections.includes(section.subheading);
+    || selectedFilters.sections.includes(section.section || section.subheading);
+  const matchesCourse = selectedFilters.courses.length === 0
+    || selectedFilters.courses.includes(section.course);
   const matchesTopic = selectedFilters.topics.length === 0
     || selectedFilters.topics.some((topic) => sectionTopics.includes(topic));
   const matchesMediaType = selectedFilters.mediaTypes.length === 0
     || selectedFilters.mediaTypes.includes(mediaType);
 
-  return matchesSection && matchesTopic && matchesMediaType;
+  return matchesSection && matchesCourse && matchesTopic && matchesMediaType;
 }
 
 function getFilterLabel(filterOptions, type, value) {
@@ -547,6 +552,63 @@ const Section = ({ title, sections }) => {
   );
 };
 
-const App = () => <Section title={data.title} sections={data.sections} />;
+const App = () => {
+  const [catalog, setCatalog] = useState(null);
+  const [catalogError, setCatalogError] = useState('');
+
+  useEffect(() => {
+    let isCancelled = false;
+
+    if (typeof fetch !== 'function') {
+      setCatalogError('Catalog could not be loaded because fetch is unavailable.');
+      return undefined;
+    }
+
+    fetchCatalog()
+      .then((nextCatalog) => {
+        if (!isCancelled) {
+          setCatalog(nextCatalog);
+          setCatalogError('');
+        }
+      })
+      .catch(() => {
+        if (!isCancelled) {
+          setCatalogError('Catalog could not be loaded. Check that the media server is running.');
+        }
+      });
+
+    return () => {
+      isCancelled = true;
+    };
+  }, []);
+
+  if (catalogError) {
+    return (
+      <div css={pageStyle}>
+        <main css={mainContentStyle(true)}>
+          <h1 css={titleStyle}>Video Library</h1>
+          <div css={serverStatusStyle} role="alert">
+            {catalogError}
+          </div>
+        </main>
+      </div>
+    );
+  }
+
+  if (!catalog) {
+    return (
+      <div css={pageStyle}>
+        <main css={mainContentStyle(true)}>
+          <h1 css={titleStyle}>Video Library</h1>
+          <div css={resultSummaryStyle} role="status">
+            Loading catalog...
+          </div>
+        </main>
+      </div>
+    );
+  }
+
+  return <Section title={catalog.title} sections={catalog.sections} />;
+};
 
 export default App;
