@@ -1,10 +1,25 @@
 import React from 'react';
-import { render, fireEvent, screen } from '@testing-library/react';
+import { render, fireEvent, screen, within } from '@testing-library/react';
 import '@testing-library/jest-dom';
-import { afterEach, vi } from 'vitest';
+import { afterEach, beforeEach, vi } from 'vitest';
 import App from './App';
 
+beforeEach(() => {
+  const storage = new Map();
+
+  Object.defineProperty(window, 'localStorage', {
+    configurable: true,
+    value: {
+      clear: vi.fn(() => storage.clear()),
+      getItem: vi.fn((key) => storage.get(key) || null),
+      removeItem: vi.fn((key) => storage.delete(key)),
+      setItem: vi.fn((key, value) => storage.set(key, String(value))),
+    },
+  });
+});
+
 afterEach(() => {
+  window.localStorage?.clear();
   vi.restoreAllMocks();
   vi.unstubAllGlobals();
 });
@@ -161,6 +176,60 @@ test('shows video loading and error states in the player modal', () => {
 
   expect(screen.queryByText(/loading video/i)).not.toBeInTheDocument();
   expect(screen.getByRole('alert')).toHaveTextContent(/video could not be loaded/i);
+});
+
+test('moves between videos from the player modal', () => {
+  render(<App />);
+  fireEvent.click(screen.getByRole('button', { name: /play rebarrel & blueprint part 1/i }));
+  let dialog = screen.getByRole('dialog');
+
+  expect(within(dialog).getByRole('heading', { name: /rebarrel & blueprint part 1/i })).toBeInTheDocument();
+  expect(screen.getByText(/1 of/i)).toBeInTheDocument();
+  expect(screen.getByRole('button', { name: /previous/i })).toBeDisabled();
+
+  fireEvent.click(screen.getByRole('button', { name: /next/i }));
+  dialog = screen.getByRole('dialog');
+
+  expect(within(dialog).getByRole('heading', { name: /rebarrel & blueprint part 2/i })).toBeInTheDocument();
+  expect(screen.getByRole('button', { name: /previous/i })).not.toBeDisabled();
+});
+
+test('returns focus to the originating card when the player closes', () => {
+  render(<App />);
+  const card = screen.getByRole('button', { name: /play rebarrel & blueprint part 1/i });
+
+  fireEvent.click(card);
+  fireEvent.click(screen.getByRole('button', { name: /close video player/i }));
+
+  expect(card).toHaveFocus();
+});
+
+test('traps tab focus inside the player modal', () => {
+  render(<App />);
+  fireEvent.click(screen.getByRole('button', { name: /play rebarrel & blueprint part 1/i }));
+  const closeButton = screen.getByRole('button', { name: /close video player/i });
+  const videoElement = document.querySelector('video');
+
+  videoElement.focus();
+  fireEvent.keyDown(document, { key: 'Tab' });
+
+  expect(closeButton).toHaveFocus();
+});
+
+test('persists and resumes the last watched video', () => {
+  render(<App />);
+  fireEvent.click(screen.getByRole('button', { name: /play rebarrel & blueprint part 1/i }));
+  fireEvent.click(screen.getByRole('button', { name: /close video player/i }));
+
+  expect(JSON.parse(window.localStorage.getItem('video-library:last-watched')).title)
+    .toMatch(/rebarrel & blueprint part 1/i);
+  expect(screen.getByText(/last watched: rebarrel & blueprint part 1/i)).toBeInTheDocument();
+
+  fireEvent.click(screen.getByRole('button', { name: /resume/i }));
+
+  expect(within(screen.getByRole('dialog')).getByRole('heading', {
+    name: /rebarrel & blueprint part 1/i,
+  })).toBeInTheDocument();
 });
 
 test('opens video player on thumbnail click', () => {

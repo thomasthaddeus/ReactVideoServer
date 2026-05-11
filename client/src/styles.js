@@ -127,6 +127,46 @@ export const resultSummaryStyle = css`
   font-size: 14px;
 `;
 
+export const lastWatchedStyle = css`
+  align-items: center;
+  background-color: #eef6ff;
+  border: 1px solid #bfdbfe;
+  border-radius: 6px;
+  color: #25496f;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  justify-content: space-between;
+  line-height: 1.35;
+  margin: 14px 20px 0;
+  padding: 10px 12px;
+
+  span {
+    font-size: 14px;
+  }
+`;
+
+export const lastWatchedButtonStyle = css`
+  background-color: #2563eb;
+  border: none;
+  border-radius: 4px;
+  color: white;
+  cursor: pointer;
+  font: inherit;
+  font-size: 13px;
+  min-height: 32px;
+  padding: 7px 10px;
+
+  &:hover {
+    background-color: #1d4ed8;
+  }
+
+  &:focus-visible {
+    outline: 2px solid #4f8ed2;
+    outline-offset: 2px;
+  }
+`;
+
 export const serverStatusStyle = css`
   background-color: #fff7ed;
   border: 1px solid #fed7aa;
@@ -253,9 +293,11 @@ export const videoPlayerOverlayStyle = css`
   padding: 20px;
   border-radius: 8px;
   z-index: 1000;
-  width: 80%;
+  width: min(1100px, 92vw);
   max-width: 1100px;
-  max-height: calc(100vh - 80px);
+  max-height: calc(100vh - 48px);
+  overflow: auto;
+  box-sizing: border-box;
 `;
 
 export const closeButtonStyle = css`
@@ -282,6 +324,53 @@ export const modalTitleStyle = css`
   font-size: 18px;
   line-height: 1.3;
   margin: 0 48px 12px 0;
+`;
+
+export const modalControlsStyle = css`
+  align-items: center;
+  display: flex;
+  gap: 8px;
+  justify-content: space-between;
+  margin-bottom: 12px;
+`;
+
+export const modalNavButtonStyle = css`
+  background-color: #1f2937;
+  border: 1px solid rgba(255, 255, 255, 0.24);
+  border-radius: 4px;
+  color: white;
+  cursor: pointer;
+  font: inherit;
+  font-size: 13px;
+  min-height: 34px;
+  padding: 7px 10px;
+
+  &:hover:not(:disabled) {
+    background-color: #374151;
+  }
+
+  &:disabled {
+    color: #9ca3af;
+    cursor: not-allowed;
+    opacity: 0.65;
+  }
+
+  &:focus-visible {
+    outline: 3px solid #8bb6e8;
+    outline-offset: 2px;
+  }
+`;
+
+export const modalPositionStyle = css`
+  color: #d1d5db;
+  font-size: 13px;
+  line-height: 1;
+`;
+
+export const videoElementStyle = css`
+  display: block;
+  max-height: min(68vh, 720px);
+  background-color: #000;
 `;
 
 export const videoStatusStyle = css`

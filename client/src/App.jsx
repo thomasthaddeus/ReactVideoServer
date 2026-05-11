@@ -13,6 +13,8 @@ import {
   topicListStyle,
   topicTagStyle,
   resultSummaryStyle,
+  lastWatchedButtonStyle,
+  lastWatchedStyle,
   serverStatusStyle,
   activeFilterBarStyle,
   activeFilterChipStyle,
@@ -25,7 +27,11 @@ import {
   thumbnailFallbackTitleStyle,
   videoPlayerOverlayStyle,
   modalTitleStyle,
+  modalControlsStyle,
+  modalNavButtonStyle,
+  modalPositionStyle,
   closeButtonStyle,
+  videoElementStyle,
   videoErrorStyle,
   videoStatusStyle,
   overlayBackgroundStyle
@@ -38,6 +44,7 @@ import Footer from './components/Footer';
 
 const serverBaseUrl = import.meta.env.VITE_SERVER_BASE_URL || 'http://localhost:3001';
 const mediaFailureWarningThreshold = 3;
+const lastWatchedStorageKey = 'video-library:last-watched';
 const emptyFilters = { sections: [], topics: [], mediaTypes: [] };
 const filterGroupLabels = {
   sections: 'Section',
@@ -120,6 +127,19 @@ function isMobileViewport() {
     && window.matchMedia('(max-width: 760px)').matches;
 }
 
+function getStoredLastWatchedVideo() {
+  if (typeof window === 'undefined' || !window.localStorage) {
+    return null;
+  }
+
+  try {
+    const storedVideo = window.localStorage.getItem(lastWatchedStorageKey);
+    return storedVideo ? JSON.parse(storedVideo) : null;
+  } catch {
+    return null;
+  }
+}
+
 const Section = ({ title, sections }) => {
   const [currentVideo, setCurrentVideo] = useState(null);
   const [isVideoLoading, setIsVideoLoading] = useState(false);
@@ -130,7 +150,11 @@ const Section = ({ title, sections }) => {
   const [failedThumbnails, setFailedThumbnails] = useState(() => new Set());
   const [mediaFailureCount, setMediaFailureCount] = useState(0);
   const [isServerUnavailable, setIsServerUnavailable] = useState(false);
+  const [lastWatchedVideo, setLastWatchedVideo] = useState(getStoredLastWatchedVideo);
   const closeButtonRef = useRef(null);
+  const modalRef = useRef(null);
+  const cardRefs = useRef([]);
+  const returnFocusRef = useRef(null);
 
   const filterOptions = useMemo(() => buildFilterOptions(sections), [sections]);
 
@@ -202,21 +226,68 @@ const Section = ({ title, sections }) => {
     recordMediaFailure();
   };
 
-  const handleVideoClick = (section) => {
+  const storeLastWatchedVideo = (section) => {
+    const nextLastWatchedVideo = {
+      link: section.link,
+      title: section.disc_title || section.subheading,
+      subtitle: section.subheading,
+    };
+
+    setLastWatchedVideo(nextLastWatchedVideo);
+
+    try {
+      if (typeof window !== 'undefined' && window.localStorage) {
+        window.localStorage.setItem(lastWatchedStorageKey, JSON.stringify(nextLastWatchedVideo));
+      }
+    } catch {
+      // Last-watched state is helpful, but playback should never depend on storage availability.
+    }
+  };
+
+  const openVideoAtIndex = (index, focusTarget = null) => {
+    const section = filteredSections[index];
+
+    if (!section) {
+      return;
+    }
+
     const videoURL = `${serverBaseUrl}/video?video=${encodeURIComponent(section.link)}`;
+    returnFocusRef.current = focusTarget || cardRefs.current[index] || returnFocusRef.current;
     setIsVideoLoading(true);
     setVideoError('');
     setCurrentVideo({
+      index,
       title: section.disc_title || section.subheading,
       subtitle: section.subheading,
       url: videoURL,
     });
+    storeLastWatchedVideo(section);
+  };
+
+  const handleVideoClick = (section, index, triggerElement) => {
+    openVideoAtIndex(index, triggerElement);
   };
 
   const handleCloseClick = () => {
+    returnFocusRef.current?.focus();
     setCurrentVideo(null);
     setIsVideoLoading(false);
     setVideoError('');
+  };
+
+  const handlePreviousVideo = () => {
+    openVideoAtIndex(currentVideo.index - 1);
+  };
+
+  const handleNextVideo = () => {
+    openVideoAtIndex(currentVideo.index + 1);
+  };
+
+  const handleResumeLastWatched = () => {
+    const index = filteredSections.findIndex((section) => section.link === lastWatchedVideo?.link);
+    if (index >= 0) {
+      openVideoAtIndex(index);
+    }
   };
 
   useEffect(() => {
@@ -229,6 +300,31 @@ const Section = ({ title, sections }) => {
     const handleKeyDown = (event) => {
       if (event.key === 'Escape') {
         handleCloseClick();
+        return;
+      }
+
+      if (event.key !== 'Tab') {
+        return;
+      }
+
+      const focusableElements = modalRef.current?.querySelectorAll(
+        'button:not(:disabled), video[controls], [href], input, select, textarea, [tabindex]:not([tabindex="-1"])'
+      );
+      const focusableList = Array.from(focusableElements || []);
+
+      if (focusableList.length === 0) {
+        return;
+      }
+
+      const firstElement = focusableList[0];
+      const lastElement = focusableList[focusableList.length - 1];
+
+      if (event.shiftKey && document.activeElement === firstElement) {
+        event.preventDefault();
+        lastElement.focus();
+      } else if (!event.shiftKey && document.activeElement === lastElement) {
+        event.preventDefault();
+        firstElement.focus();
       }
     };
 
@@ -300,6 +396,14 @@ const Section = ({ title, sections }) => {
             Media server appears to be unavailable. Thumbnails or videos may not load until it is running.
           </div>
         )}
+        {lastWatchedVideo && (
+          <div css={lastWatchedStyle}>
+            <span>Last watched: {lastWatchedVideo.title}</span>
+            <button type="button" css={lastWatchedButtonStyle} onClick={handleResumeLastWatched}>
+              Resume
+            </button>
+          </div>
+        )}
         {activeFilterChips.length > 0 && (
           <div css={activeFilterBarStyle} aria-label="Active filters">
             {activeFilterChips.map((chip) => (
@@ -324,9 +428,12 @@ const Section = ({ title, sections }) => {
             {filteredSections.map((section, index) => (
               <button
                 key={`${section.link}-${index}`}
+                ref={(element) => {
+                  cardRefs.current[index] = element;
+                }}
                 type="button"
                 css={cardStyle}
-                onClick={() => handleVideoClick(section)}
+                onClick={(event) => handleVideoClick(section, index, event.currentTarget)}
                 aria-label={`Play ${section.disc_title || section.subheading}`}
               >
                 {failedThumbnails.has(section.thumbnail) ? (
@@ -368,6 +475,7 @@ const Section = ({ title, sections }) => {
         <>
           <div css={overlayBackgroundStyle} onClick={handleCloseClick}></div>
           <div
+            ref={modalRef}
             css={videoPlayerOverlayStyle}
             role="dialog"
             aria-modal="true"
@@ -383,6 +491,27 @@ const Section = ({ title, sections }) => {
               X
             </button>
             <h2 id="video-player-title" css={modalTitleStyle}>{currentVideo.title}</h2>
+            <div css={modalControlsStyle}>
+              <button
+                type="button"
+                css={modalNavButtonStyle}
+                onClick={handlePreviousVideo}
+                disabled={currentVideo.index === 0}
+              >
+                Previous
+              </button>
+              <span css={modalPositionStyle}>
+                {currentVideo.index + 1} of {filteredSections.length}
+              </span>
+              <button
+                type="button"
+                css={modalNavButtonStyle}
+                onClick={handleNextVideo}
+                disabled={currentVideo.index >= filteredSections.length - 1}
+              >
+                Next
+              </button>
+            </div>
             {isVideoLoading && (
               <div css={videoStatusStyle} role="status">
                 Loading video...
@@ -396,6 +525,7 @@ const Section = ({ title, sections }) => {
             <video
               controls
               width="100%"
+              css={videoElementStyle}
               onLoadStart={() => {
                 setIsVideoLoading(true);
                 setVideoError('');
