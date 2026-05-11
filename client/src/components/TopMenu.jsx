@@ -4,12 +4,12 @@ import { menuStyle, menuItemStyle } from "./componentStyles";
 import SearchBar from './SearchBar';
 import Hamburger from './Hamburger';
 
-const TopMenu = ({ isSidebarCollapsed, onToggleSidebar, searchQuery, onSearchChange }) => (
+const TopMenu = ({ isSidebarCollapsed, onToggleSidebar, onNavigate, searchQuery, onSearchChange }) => (
   <div css={menuStyle}>
     <Hamburger isCollapsed={isSidebarCollapsed} onClick={onToggleSidebar} />
-    <a href="#videos" css={menuItemStyle}>Videos</a>
-    <a href="#manuals" css={menuItemStyle}>Manuals</a>
-    <a href="#library" css={menuItemStyle}>Library</a>
+    <a href="#videos" css={menuItemStyle} onClick={onNavigate}>Videos</a>
+    <a href="#manuals" css={menuItemStyle} onClick={onNavigate}>Manuals</a>
+    <a href="#library" css={menuItemStyle} onClick={onNavigate}>Library</a>
     <SearchBar value={searchQuery} onChange={onSearchChange} />
   </div>
 );

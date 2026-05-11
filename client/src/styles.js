@@ -14,7 +14,7 @@ export const mainContentStyle = (isSidebarCollapsed) => css`
   box-sizing: border-box;
 
   @media (max-width: 760px) {
-    margin-left: ${isSidebarCollapsed ? '0' : '220px'};
+    margin-left: 0;
   }
 `;
 

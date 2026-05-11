@@ -9,6 +9,19 @@ afterEach(() => {
   vi.unstubAllGlobals();
 });
 
+function stubMobileViewport(matches = true) {
+  vi.stubGlobal('matchMedia', vi.fn().mockImplementation((query) => ({
+    matches,
+    media: query,
+    onchange: null,
+    addListener: vi.fn(),
+    removeListener: vi.fn(),
+    addEventListener: vi.fn(),
+    removeEventListener: vi.fn(),
+    dispatchEvent: vi.fn(),
+  })));
+}
+
 test('renders the section title', () => {
   render(<App />);
   const titleElement = screen.getAllByText(/Section 5/i)[0];
@@ -90,6 +103,33 @@ test('searches manual paths', () => {
   });
 
   expect(screen.getByRole('link', { name: /ruger_mk3/i })).toBeInTheDocument();
+});
+
+test('closes mobile sidebar when a top nav target is selected', () => {
+  stubMobileViewport(true);
+  render(<App />);
+
+  expect(document.querySelector('aside')).toHaveAttribute('aria-hidden', 'false');
+  fireEvent.click(screen.getByRole('link', { name: /^videos$/i }));
+
+  expect(document.querySelector('aside')).toHaveAttribute('aria-hidden', 'true');
+});
+
+test('closes mobile sidebar when a manual is selected', () => {
+  stubMobileViewport(true);
+  render(<App />);
+
+  fireEvent.click(screen.getByRole('button', { name: /schematics/i }));
+  fireEvent.click(screen.getByRole('link', { name: /1014dl-colt1911-gun schematics/i }));
+
+  expect(document.querySelector('aside')).toHaveAttribute('aria-hidden', 'true');
+});
+
+test('closes mobile sidebar from the drawer backdrop', () => {
+  render(<App />);
+  fireEvent.click(document.querySelector('button[aria-label="Close sidebar"]'));
+
+  expect(document.querySelector('aside')).toHaveAttribute('aria-hidden', 'true');
 });
 
 test('shows thumbnail fallback when an image fails to load', () => {

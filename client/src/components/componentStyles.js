@@ -57,7 +57,9 @@ export const menuStyle = css`
   height: 56px;
   display: flex;
   align-items: center;
+  flex-wrap: nowrap;
   gap: 6px;
+  overflow: hidden;
   padding: 0 14px;
   box-sizing: border-box;
 `;
@@ -68,9 +70,16 @@ export const menuItemStyle = css`
   padding: 12px 14px;
   text-decoration: none;
   border-radius: 4px;
+  flex: 0 0 auto;
+  white-space: nowrap;
   &:hover {
     background-color: #ddd;
     color: black;
+  }
+
+  @media (max-width: 620px) {
+    padding: 10px 8px;
+    font-size: 13px;
   }
 `;
 
@@ -87,6 +96,31 @@ export const sidebarStyle = (isCollapsed) => css`
   overflow-y: auto;
   transition: width 0.2s ease, padding 0.2s ease;
   z-index: 900;
+
+  @media (max-width: 760px) {
+    width: min(320px, 86vw);
+    padding: 14px;
+    transform: translateX(${isCollapsed ? '-100%' : '0'});
+    transition: transform 0.2s ease;
+    box-shadow: ${isCollapsed ? 'none' : '0 18px 40px rgba(0, 0, 0, 0.28)'};
+  }
+`;
+
+export const sidebarBackdropStyle = (isVisible) => css`
+  display: none;
+
+  @media (max-width: 760px) {
+    background-color: rgba(17, 24, 39, 0.58);
+    border: 0;
+    display: ${isVisible ? 'block' : 'none'};
+    height: calc(100vh - 56px);
+    left: 0;
+    padding: 0;
+    position: fixed;
+    top: 56px;
+    width: 100vw;
+    z-index: 850;
+  }
 `;
 
 export const linkStyle = css`
@@ -108,6 +142,12 @@ export const searchBarStyle = css`
   border: 1px solid #555;
   border-radius: 4px;
   box-sizing: border-box;
+
+  @media (max-width: 620px) {
+    width: min(160px, 34vw);
+    flex-basis: 160px;
+    padding: 7px 8px;
+  }
 `;
 
 export const manualsStyle = css`

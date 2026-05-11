@@ -89,7 +89,7 @@ function countManualLinks(files) {
   }, 0);
 }
 
-const Manuals = () => {
+const Manuals = ({ onManualSelect }) => {
   const [expandedGroups, setExpandedGroups] = useState(() => new Set());
   const [manualSearchQuery, setManualSearchQuery] = useState('');
   const normalizedQuery = manualSearchQuery.trim().toLowerCase();
@@ -150,7 +150,13 @@ const Manuals = () => {
 
       return (
         <li key={itemId}>
-          <a href={resolveManualLink(file.link)} css={fileLinkStyle} target="_blank" rel="noopener noreferrer">
+          <a
+            href={resolveManualLink(file.link)}
+            css={fileLinkStyle}
+            target="_blank"
+            rel="noopener noreferrer"
+            onClick={onManualSelect}
+          >
             {file.name}
           </a>
         </li>

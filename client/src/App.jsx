@@ -114,6 +114,12 @@ function getFilterLabel(filterOptions, type, value) {
   return filterOptions[type]?.find((option) => option.value === value)?.label || value;
 }
 
+function isMobileViewport() {
+  return typeof window !== 'undefined'
+    && typeof window.matchMedia === 'function'
+    && window.matchMedia('(max-width: 760px)').matches;
+}
+
 const Section = ({ title, sections }) => {
   const [currentVideo, setCurrentVideo] = useState(null);
   const [isVideoLoading, setIsVideoLoading] = useState(false);
@@ -171,6 +177,12 @@ const Section = ({ title, sections }) => {
 
   const handleClearFilters = () => {
     setSelectedFilters(emptyFilters);
+  };
+
+  const closeSidebarOnMobile = () => {
+    if (isMobileViewport()) {
+      setIsSidebarCollapsed(true);
+    }
   };
 
   const recordMediaFailure = () => {
@@ -258,17 +270,21 @@ const Section = ({ title, sections }) => {
       <TopMenu
         isSidebarCollapsed={isSidebarCollapsed}
         onToggleSidebar={() => setIsSidebarCollapsed((collapsed) => !collapsed)}
+        onNavigate={closeSidebarOnMobile}
         searchQuery={searchQuery}
         onSearchChange={setSearchQuery}
       />
-      <Sidebar isCollapsed={isSidebarCollapsed}>
+      <Sidebar
+        isCollapsed={isSidebarCollapsed}
+        onClose={() => setIsSidebarCollapsed(true)}
+      >
         <VideoFilters
           filterOptions={filterOptions}
           selectedFilters={selectedFilters}
           onToggleFilter={handleToggleFilter}
           onClearFilters={handleClearFilters}
         />
-        <Manuals />
+        <Manuals onManualSelect={closeSidebarOnMobile} />
       </Sidebar>
       <main css={mainContentStyle(isSidebarCollapsed)}>
         <h1 id="videos" css={titleStyle}>{title}</h1>
