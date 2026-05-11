@@ -5,6 +5,10 @@ const createMediaRouter = require('./routes/media');
 function createApp(appConfig = config) {
   const app = express();
 
+  app.get('/health', (req, res) => {
+    res.json({ status: 'ok' });
+  });
+
   app.use('/docs', express.static(appConfig.docsPath));
   app.use(createMediaRouter(appConfig));
 

@@ -127,6 +127,71 @@ export const resultSummaryStyle = css`
   font-size: 14px;
 `;
 
+export const serverStatusStyle = css`
+  background-color: #fff7ed;
+  border: 1px solid #fed7aa;
+  border-radius: 6px;
+  color: #9a3412;
+  font-size: 14px;
+  line-height: 1.35;
+  margin: 14px 20px 0;
+  padding: 10px 12px;
+`;
+
+export const activeFilterBarStyle = css`
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  padding: 12px 20px 0;
+`;
+
+export const activeFilterChipStyle = css`
+  align-items: center;
+  background-color: #e8f2ff;
+  border: 1px solid #b9d5f4;
+  border-radius: 999px;
+  color: #25496f;
+  cursor: pointer;
+  display: inline-flex;
+  font: inherit;
+  font-size: 13px;
+  gap: 6px;
+  line-height: 1;
+  min-height: 30px;
+  padding: 7px 10px;
+
+  &:hover {
+    background-color: #d7eaff;
+  }
+
+  &:focus-visible {
+    outline: 2px solid #4f8ed2;
+    outline-offset: 2px;
+  }
+`;
+
+export const clearActiveFiltersButtonStyle = css`
+  background-color: transparent;
+  border: 1px solid #c8ced6;
+  border-radius: 999px;
+  color: #374151;
+  cursor: pointer;
+  font: inherit;
+  font-size: 13px;
+  line-height: 1;
+  min-height: 30px;
+  padding: 7px 10px;
+
+  &:hover {
+    background-color: #fff;
+  }
+
+  &:focus-visible {
+    outline: 2px solid #4f8ed2;
+    outline-offset: 2px;
+  }
+`;
+
 export const emptyStateStyle = css`
   padding: 48px 20px 72px;
   text-align: center;
@@ -151,6 +216,32 @@ export const thumbnailStyle = css`
   aspect-ratio: 16 / 9;
   object-fit: cover;
   cursor: pointer;
+`;
+
+export const thumbnailFallbackStyle = css`
+  align-items: center;
+  aspect-ratio: 16 / 9;
+  background:
+    linear-gradient(135deg, rgba(31, 41, 55, 0.96), rgba(75, 85, 99, 0.9));
+  color: #f9fafb;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  justify-content: center;
+  padding: 18px;
+  text-align: center;
+`;
+
+export const thumbnailFallbackTitleStyle = css`
+  font-size: 14px;
+  font-weight: 700;
+  line-height: 1.2;
+`;
+
+export const thumbnailFallbackMetaStyle = css`
+  color: #d1d5db;
+  font-size: 12px;
+  line-height: 1.3;
 `;
 
 export const videoPlayerOverlayStyle = css`
@@ -191,6 +282,31 @@ export const modalTitleStyle = css`
   font-size: 18px;
   line-height: 1.3;
   margin: 0 48px 12px 0;
+`;
+
+export const videoStatusStyle = css`
+  align-items: center;
+  background-color: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  border-radius: 6px;
+  color: white;
+  display: flex;
+  font-size: 14px;
+  justify-content: center;
+  margin-bottom: 12px;
+  min-height: 44px;
+  padding: 10px;
+`;
+
+export const videoErrorStyle = css`
+  background-color: rgba(127, 29, 29, 0.72);
+  border: 1px solid rgba(252, 165, 165, 0.7);
+  border-radius: 6px;
+  color: #fee2e2;
+  font-size: 14px;
+  line-height: 1.35;
+  margin-bottom: 12px;
+  padding: 10px;
 `;
 
 export const overlayBackgroundStyle = css`

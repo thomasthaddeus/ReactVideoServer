@@ -2,6 +2,14 @@ const request = require('supertest');
 const app = require('../index');
 
 describe('Video and Thumbnail Endpoints', () => {
+  it('returns health status', async () => {
+    await request(app)
+      .get('/health')
+      .expect(200)
+      .expect('content-type', /json/)
+      .expect({ status: 'ok' });
+  });
+
   it('returns a video file', async () => {
     await request(app)
       .head('/video')

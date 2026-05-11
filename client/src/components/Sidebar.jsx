@@ -2,11 +2,11 @@
 /** @jsxImportSource @emotion/react */
 import { sidebarStyle } from "./componentStyles";
 
-const Sidebar = ({ components, isCollapsed }) => (
+const Sidebar = ({ children, components = [], isCollapsed }) => (
   <div css={sidebarStyle(isCollapsed)} aria-hidden={isCollapsed}>
-    {!isCollapsed && components.map((Component, index) => (
-      <Component key={index} />
-    ))}
+    {!isCollapsed && (children || components.map((Component, index) => (
+        <Component key={index} />
+      )))}
   </div>
 );
 
