@@ -1,14 +1,17 @@
 /** @jsxImportSource @emotion/react */
 import { css } from '@emotion/react';
+import { colors, layout, radii, shadows, spacing, typography } from './theme';
 
 export const pageStyle = css`
   min-height: 100vh;
-  background-color: #f6f7f9;
+  background-color: ${colors.page};
+  color: ${colors.text};
+  font-family: ${typography.fontFamily};
 `;
 
 export const mainContentStyle = (isSidebarCollapsed) => css`
-  margin-left: ${isSidebarCollapsed ? '48px' : '280px'};
-  padding-top: 56px;
+  margin-left: ${isSidebarCollapsed ? layout.sidebarCollapsed : layout.sidebarExpanded};
+  padding-top: ${layout.topMenuHeight};
   transition: margin-left 0.2s ease;
   min-height: 100vh;
   box-sizing: border-box;
@@ -20,17 +23,26 @@ export const mainContentStyle = (isSidebarCollapsed) => css`
 
 export const containerStyle = css`
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
-  gap: 18px;
-  padding: 18px 20px 28px;
+  grid-template-columns: repeat(auto-fill, minmax(232px, 1fr));
+  gap: ${spacing.md};
+  padding: ${spacing.lg} ${spacing.xl} ${spacing.xxl};
+
+  @media (min-width: 1180px) {
+    grid-template-columns: repeat(auto-fill, minmax(248px, 1fr));
+  }
+
+  @media (max-width: 560px) {
+    grid-template-columns: 1fr;
+    padding: ${spacing.md};
+  }
 `;
 
 export const cardStyle = css`
-  border: 1px solid #d6d9de;
-  border-radius: 8px;
+  border: 1px solid ${colors.border};
+  border-radius: ${radii.lg};
   padding: 0;
-  box-shadow: 0 2px 8px rgba(20, 28, 38, 0.08);
-  background-color: #fff;
+  box-shadow: ${shadows.card};
+  background-color: ${colors.surface};
   display: flex;
   flex-direction: column;
   transition: transform 0.18s ease, box-shadow 0.18s ease, border-color 0.18s ease;
@@ -43,33 +55,33 @@ export const cardStyle = css`
   min-width: 0;
 
   &:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 10px 24px rgba(20, 28, 38, 0.16);
-    border-color: #8bb6e8;
+    transform: translateY(-1px);
+    box-shadow: ${shadows.cardHover};
+    border-color: ${colors.accentBorder};
   }
 
   &:focus-visible {
-    outline: 3px solid #8bb6e8;
+    outline: 3px solid ${colors.focus};
     outline-offset: 2px;
   }
 `;
 
 export const cardBodyStyle = css`
-  padding: 12px 14px 14px;
+  padding: ${spacing.md};
 `;
 
 export const cardTitleStyle = css`
-  font-size: 16px;
+  font-size: ${typography.cardTitle};
   font-weight: 700;
   line-height: 1.25;
-  margin: 0 0 6px;
+  margin: 0 0 ${spacing.xs};
 `;
 
 export const cardMetaStyle = css`
-  color: #4b5563;
+  color: ${colors.textMuted};
   font-size: 13px;
   line-height: 1.3;
-  margin: 0 0 10px;
+  margin: 0 0 ${spacing.sm};
 `;
 
 export const topicListStyle = css`
@@ -82,13 +94,13 @@ export const topicListStyle = css`
 `;
 
 export const topicTagStyle = css`
-  background-color: #edf5ff;
-  border: 1px solid #c6ddf7;
-  border-radius: 999px;
-  color: #25496f;
+  background-color: ${colors.accentSoft};
+  border: 1px solid ${colors.accentBorder};
+  border-radius: ${radii.pill};
+  color: ${colors.accentHover};
   font-size: 12px;
   line-height: 1;
-  padding: 5px 8px;
+  padding: 5px ${spacing.sm};
 `;
 
 export const legacyCardStyle = css`
@@ -113,33 +125,34 @@ export const legacyCardStyle = css`
 `;
 
 export const titleStyle = css`
-  text-align: center;
-  background-color: #4CAF50;
-  color: white;
-  padding: 14px 20px;
-  font-size: 24px;
+  background-color: ${colors.surface};
+  border-bottom: 1px solid ${colors.border};
+  color: ${colors.text};
+  padding: ${spacing.lg} ${spacing.xl} ${spacing.md};
+  font-size: ${typography.sectionTitle};
   margin: 0;
+  text-align: left;
 `;
 
 export const resultSummaryStyle = css`
-  padding: 14px 20px 0;
-  color: #4b5563;
-  font-size: 14px;
+  padding: ${spacing.md} ${spacing.xl} 0;
+  color: ${colors.textMuted};
+  font-size: ${typography.body};
 `;
 
 export const lastWatchedStyle = css`
   align-items: center;
-  background-color: #eef6ff;
-  border: 1px solid #bfdbfe;
-  border-radius: 6px;
-  color: #25496f;
+  background-color: ${colors.accentSoft};
+  border: 1px solid ${colors.accentBorder};
+  border-radius: ${radii.md};
+  color: ${colors.accentHover};
   display: flex;
   flex-wrap: wrap;
   gap: 8px;
   justify-content: space-between;
   line-height: 1.35;
-  margin: 14px 20px 0;
-  padding: 10px 12px;
+  margin: ${spacing.md} ${spacing.xl} 0;
+  padding: 10px ${spacing.md};
 
   span {
     font-size: 14px;
@@ -147,9 +160,9 @@ export const lastWatchedStyle = css`
 `;
 
 export const lastWatchedButtonStyle = css`
-  background-color: #2563eb;
+  background-color: ${colors.accent};
   border: none;
-  border-radius: 4px;
+  border-radius: ${radii.sm};
   color: white;
   cursor: pointer;
   font: inherit;
@@ -158,39 +171,39 @@ export const lastWatchedButtonStyle = css`
   padding: 7px 10px;
 
   &:hover {
-    background-color: #1d4ed8;
+    background-color: ${colors.accentHover};
   }
 
   &:focus-visible {
-    outline: 2px solid #4f8ed2;
+    outline: 2px solid ${colors.focus};
     outline-offset: 2px;
   }
 `;
 
 export const serverStatusStyle = css`
-  background-color: #fff7ed;
-  border: 1px solid #fed7aa;
-  border-radius: 6px;
-  color: #9a3412;
+  background-color: ${colors.warningBg};
+  border: 1px solid ${colors.warningBorder};
+  border-radius: ${radii.md};
+  color: ${colors.warningText};
   font-size: 14px;
   line-height: 1.35;
-  margin: 14px 20px 0;
-  padding: 10px 12px;
+  margin: ${spacing.md} ${spacing.xl} 0;
+  padding: 10px ${spacing.md};
 `;
 
 export const activeFilterBarStyle = css`
   display: flex;
   flex-wrap: wrap;
-  gap: 8px;
-  padding: 12px 20px 0;
+  gap: ${spacing.sm};
+  padding: ${spacing.md} ${spacing.xl} 0;
 `;
 
 export const activeFilterChipStyle = css`
   align-items: center;
-  background-color: #e8f2ff;
-  border: 1px solid #b9d5f4;
-  border-radius: 999px;
-  color: #25496f;
+  background-color: ${colors.accentSoft};
+  border: 1px solid ${colors.accentBorder};
+  border-radius: ${radii.pill};
+  color: ${colors.accentHover};
   cursor: pointer;
   display: inline-flex;
   font: inherit;
@@ -205,16 +218,16 @@ export const activeFilterChipStyle = css`
   }
 
   &:focus-visible {
-    outline: 2px solid #4f8ed2;
+    outline: 2px solid ${colors.focus};
     outline-offset: 2px;
   }
 `;
 
 export const clearActiveFiltersButtonStyle = css`
   background-color: transparent;
-  border: 1px solid #c8ced6;
-  border-radius: 999px;
-  color: #374151;
+  border: 1px solid ${colors.borderStrong};
+  border-radius: ${radii.pill};
+  color: ${colors.text};
   cursor: pointer;
   font: inherit;
   font-size: 13px;
@@ -223,11 +236,11 @@ export const clearActiveFiltersButtonStyle = css`
   padding: 7px 10px;
 
   &:hover {
-    background-color: #fff;
+    background-color: ${colors.surface};
   }
 
   &:focus-visible {
-    outline: 2px solid #4f8ed2;
+    outline: 2px solid ${colors.focus};
     outline-offset: 2px;
   }
 `;
@@ -235,7 +248,7 @@ export const clearActiveFiltersButtonStyle = css`
 export const emptyStateStyle = css`
   padding: 48px 20px 72px;
   text-align: center;
-  color: #4b5563;
+  color: ${colors.textMuted};
 `;
 
 export const subheadingStyle = css`
@@ -256,6 +269,7 @@ export const thumbnailStyle = css`
   aspect-ratio: 16 / 9;
   object-fit: cover;
   cursor: pointer;
+  background-color: ${colors.surfaceRaised};
 `;
 
 export const thumbnailFallbackStyle = css`

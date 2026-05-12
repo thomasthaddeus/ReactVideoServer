@@ -4,7 +4,7 @@ import { footerStyle } from './componentStyles';
 
 const Footer = () => (
   <footer css={footerStyle}>
-    <p>© 2024 Your Company</p>
+    <p>Video Library · Local media catalog · Client v0.2.0</p>
   </footer>
 );
 

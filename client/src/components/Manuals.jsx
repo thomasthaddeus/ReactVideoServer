@@ -130,7 +130,7 @@ const Manuals = ({ onManualSelect }) => {
           <li key={itemId}>
             <button
               type="button"
-              css={manualCategoryButtonStyle(depth)}
+              css={manualCategoryButtonStyle(depth, isExpanded)}
               onClick={() => toggleCollapsible(itemId)}
               aria-expanded={isExpanded}
             >
@@ -189,7 +189,7 @@ const Manuals = ({ onManualSelect }) => {
             <li key={category.category}>
               <button
                 type="button"
-                css={manualCategoryButtonStyle(0)}
+                css={manualCategoryButtonStyle(0, isExpanded)}
                 onClick={() => toggleCollapsible(categoryId)}
                 aria-expanded={isExpanded}
               >

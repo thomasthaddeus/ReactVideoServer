@@ -1,14 +1,17 @@
 // src/components/componentStyles.js
 /** @jsxImportSource @emotion/react */
 import { css } from '@emotion/react';
+import { colors, layout, radii, shadows, spacing, typography } from '../theme';
 
 export const footerStyle = css`
-  background-color: #333;
-  color: white;
+  background-color: ${colors.surface};
+  border-top: 1px solid ${colors.border};
+  color: ${colors.textMuted};
   text-align: center;
-  padding: 6px 0;
+  padding: ${spacing.sm} ${spacing.xl};
   width: 100%;
-  font-size: 13px;
+  font-size: ${typography.small};
+  line-height: 1.4;
 
   p {
     margin: 0;
@@ -20,19 +23,19 @@ export const hamburgerButtonStyle = css`
   height: 40px;
   font-size: 22px;
   line-height: 1;
-  background: #444;
+  background: ${colors.sidebarElevated};
   border: none;
-  border-radius: 4px;
+  border-radius: ${radii.sm};
   cursor: pointer;
-  color: white;
+  color: ${colors.textInverse};
   flex: 0 0 auto;
 
   &:hover {
-    background-color: #555;
+    background-color: ${colors.sidebarHover};
   }
 
   &:focus {
-    outline: 2px solid #9fd0ff;
+    outline: 2px solid ${colors.focus};
     outline-offset: 2px;
   }
 `;
@@ -40,7 +43,7 @@ export const hamburgerButtonStyle = css`
 export const navStyle = css`
   display: flex;
   flex-direction: column;
-  background-color: #333;
+  background-color: ${colors.sidebar};
   position: absolute;
   top: 50px;
   right: 0;
@@ -48,13 +51,13 @@ export const navStyle = css`
 `;
 
 export const menuStyle = css`
-  background-color: #333;
+  background-color: ${colors.sidebar};
   position: fixed;
   top: 0;
   left: 0;
   right: 0;
   z-index: 1000;
-  height: 56px;
+  height: ${layout.topMenuHeight};
   display: flex;
   align-items: center;
   flex-wrap: nowrap;
@@ -65,16 +68,21 @@ export const menuStyle = css`
 `;
 
 export const menuItemStyle = css`
-  color: white;
+  color: ${colors.textInverse};
   text-align: center;
   padding: 12px 14px;
   text-decoration: none;
-  border-radius: 4px;
+  border-radius: ${radii.sm};
   flex: 0 0 auto;
   white-space: nowrap;
   &:hover {
-    background-color: #ddd;
-    color: black;
+    background-color: ${colors.sidebarHover};
+    color: ${colors.textInverse};
+  }
+
+  &:focus-visible {
+    outline: 2px solid ${colors.focus};
+    outline-offset: 2px;
   }
 
   @media (max-width: 620px) {
@@ -84,14 +92,14 @@ export const menuItemStyle = css`
 `;
 
 export const sidebarStyle = (isCollapsed) => css`
-  width: ${isCollapsed ? '48px' : '280px'};
-  height: calc(100vh - 56px);
+  width: ${isCollapsed ? layout.sidebarCollapsed : layout.sidebarExpanded};
+  height: calc(100vh - ${layout.topMenuHeight});
   position: fixed;
   left: 0;
-  top: 56px;
-  background-color: #333;
-  color: white;
-  padding: ${isCollapsed ? '10px 6px' : '14px'};
+  top: ${layout.topMenuHeight};
+  background-color: ${colors.sidebar};
+  color: ${colors.textInverse};
+  padding: ${isCollapsed ? '10px 6px' : spacing.md};
   box-sizing: border-box;
   overflow-y: auto;
   transition: width 0.2s ease, padding 0.2s ease;
@@ -99,10 +107,10 @@ export const sidebarStyle = (isCollapsed) => css`
 
   @media (max-width: 760px) {
     width: min(320px, 86vw);
-    padding: 14px;
+    padding: ${spacing.md};
     transform: translateX(${isCollapsed ? '-100%' : '0'});
     transition: transform 0.2s ease;
-    box-shadow: ${isCollapsed ? 'none' : '0 18px 40px rgba(0, 0, 0, 0.28)'};
+    box-shadow: ${isCollapsed ? 'none' : shadows.drawer};
   }
 `;
 
@@ -113,11 +121,11 @@ export const sidebarBackdropStyle = (isVisible) => css`
     background-color: rgba(17, 24, 39, 0.58);
     border: 0;
     display: ${isVisible ? 'block' : 'none'};
-    height: calc(100vh - 56px);
+    height: calc(100vh - ${layout.topMenuHeight});
     left: 0;
     padding: 0;
     position: fixed;
-    top: 56px;
+    top: ${layout.topMenuHeight};
     width: 100vw;
     z-index: 850;
   }
@@ -126,11 +134,11 @@ export const sidebarBackdropStyle = (isVisible) => css`
 export const linkStyle = css`
   display: block;
   padding: 10px;
-  color: white;
+  color: ${colors.textInverse};
   text-decoration: none;
   &:hover {
-    background-color: #ddd;
-    color: black;
+    background-color: ${colors.sidebarHover};
+    color: ${colors.textInverse};
   }
 `;
 
@@ -139,8 +147,8 @@ export const searchBarStyle = css`
   padding: 8px 10px;
   margin-left: auto;
   flex: 0 1 240px;
-  border: 1px solid #555;
-  border-radius: 4px;
+  border: 1px solid ${colors.borderStrong};
+  border-radius: ${radii.sm};
   box-sizing: border-box;
 
   @media (max-width: 620px) {
@@ -154,7 +162,7 @@ export const manualsStyle = css`
   margin: 0;
 
   h2 {
-    font-size: 18px;
+    font-size: 17px;
     margin: 0 0 12px;
   }
 
@@ -166,9 +174,9 @@ export const manualsStyle = css`
 `;
 
 export const manualSearchStyle = css`
-  background-color: #f9fafb;
-  border: 1px solid #6b7280;
-  border-radius: 4px;
+  background-color: ${colors.surface};
+  border: 1px solid ${colors.borderStrong};
+  border-radius: ${radii.sm};
   box-sizing: border-box;
   font: inherit;
   font-size: 13px;
@@ -177,24 +185,25 @@ export const manualSearchStyle = css`
   width: 100%;
 
   &:focus {
-    outline: 2px solid #9fd0ff;
+    outline: 2px solid ${colors.focus};
     outline-offset: 2px;
   }
 `;
 
 export const manualSearchMetaStyle = css`
-  color: #d1d5db;
+  color: ${colors.textInverseMuted};
   font-size: 12px;
   line-height: 1.3;
   margin-bottom: 8px;
 `;
 
-export const manualCategoryButtonStyle = (depth) => css`
+export const manualCategoryButtonStyle = (depth, isExpanded = false) => css`
   align-items: center;
-  background-color: transparent;
+  background-color: ${isExpanded ? colors.sidebarElevated : 'transparent'};
   border: none;
-  border-radius: 4px;
-  color: ${depth === 0 ? '#fff' : '#e5e7eb'};
+  border-left: 3px solid ${isExpanded ? colors.focus : 'transparent'};
+  border-radius: ${radii.sm};
+  color: ${depth === 0 ? colors.textInverse : colors.textInverseMuted};
   cursor: pointer;
   display: flex;
   font: inherit;
@@ -204,7 +213,7 @@ export const manualCategoryButtonStyle = (depth) => css`
   line-height: 1.25;
   margin: ${depth === 0 ? '10px 0 4px' : '6px 0'};
   min-height: 30px;
-  padding: 5px 6px;
+  padding: 5px 6px 5px ${isExpanded ? '7px' : '6px'};
   text-align: left;
   width: 100%;
 
@@ -216,17 +225,18 @@ export const manualCategoryButtonStyle = (depth) => css`
   }
 
   &:hover {
-    background-color: #444;
+    background-color: ${colors.sidebarHover};
+    color: ${colors.textInverse};
   }
 
   &:focus-visible {
-    outline: 2px solid #9fd0ff;
+    outline: 2px solid ${colors.focus};
     outline-offset: 2px;
   }
 `;
 
 export const manualDisclosureStyle = css`
-  color: #9fd0ff;
+  color: ${colors.focus};
   flex: 0 0 14px;
   font-size: 12px;
   line-height: 1;
@@ -234,14 +244,14 @@ export const manualDisclosureStyle = css`
 `;
 
 export const manualEmptyStateStyle = css`
-  color: #d1d5db;
+  color: ${colors.textInverseMuted};
   font-size: 13px;
   line-height: 1.35;
   margin: 10px 0 0;
 `;
 
 export const filterPanelStyle = css`
-  border-bottom: 1px solid #4b5563;
+  border-bottom: 1px solid ${colors.sidebarHover};
   margin-bottom: 16px;
   padding-bottom: 16px;
 `;
@@ -254,26 +264,27 @@ export const filterHeaderStyle = css`
   margin-bottom: 12px;
 
   h2 {
-    font-size: 18px;
+    font-size: 17px;
     margin: 0;
   }
 `;
 
 export const filterResetButtonStyle = css`
-  border: 1px solid #6b7280;
-  border-radius: 4px;
+  border: 1px solid ${colors.borderStrong};
+  border-radius: ${radii.sm};
   background-color: transparent;
-  color: #e5e7eb;
+  color: ${colors.textInverseMuted};
   cursor: pointer;
   font-size: 12px;
   padding: 5px 8px;
 
   &:hover {
-    background-color: #4b5563;
+    background-color: ${colors.sidebarHover};
+    color: ${colors.textInverse};
   }
 
   &:focus-visible {
-    outline: 2px solid #9fd0ff;
+    outline: 2px solid ${colors.focus};
     outline-offset: 2px;
   }
 `;
@@ -283,7 +294,7 @@ export const filterGroupStyle = css`
 `;
 
 export const filterGroupTitleStyle = css`
-  color: #d1d5db;
+  color: ${colors.textInverseMuted};
   font-size: 12px;
   letter-spacing: 0;
   margin: 0 0 8px;
@@ -297,10 +308,11 @@ export const filterListStyle = css`
 
 export const filterButtonStyle = (isActive) => css`
   align-items: center;
-  background-color: ${isActive ? '#dbeafe' : '#3f3f46'};
-  border: 1px solid ${isActive ? '#93c5fd' : '#52525b'};
-  border-radius: 4px;
-  color: ${isActive ? '#1e3a5f' : '#f9fafb'};
+  background-color: ${isActive ? colors.accentSoft : colors.sidebarElevated};
+  border: 1px solid ${isActive ? colors.accentBorder : colors.sidebarHover};
+  border-left: 3px solid ${isActive ? colors.focus : 'transparent'};
+  border-radius: ${radii.sm};
+  color: ${isActive ? colors.accentHover : colors.textInverse};
   cursor: pointer;
   display: flex;
   font: inherit;
@@ -309,7 +321,7 @@ export const filterButtonStyle = (isActive) => css`
   justify-content: space-between;
   line-height: 1.25;
   min-height: 34px;
-  padding: 7px 8px;
+  padding: 7px 8px 7px ${isActive ? '6px' : '8px'};
   text-align: left;
   width: 100%;
 
@@ -321,19 +333,19 @@ export const filterButtonStyle = (isActive) => css`
   }
 
   &:hover {
-    background-color: ${isActive ? '#bfdbfe' : '#52525b'};
+    background-color: ${isActive ? '#d7eaff' : colors.sidebarHover};
   }
 
   &:focus-visible {
-    outline: 2px solid #9fd0ff;
+    outline: 2px solid ${colors.focus};
     outline-offset: 2px;
   }
 `;
 
 export const filterCountStyle = css`
   background-color: rgba(255, 255, 255, 0.72);
-  border-radius: 999px;
-  color: #1f2937;
+  border-radius: ${radii.pill};
+  color: ${colors.text};
   flex: 0 0 auto;
   font-size: 11px;
   min-width: 22px;
@@ -357,11 +369,20 @@ export const fileLinkStyle = css`
   display: block;
   margin: 2px 0;
   text-decoration: none;
-  color: #cfe7ff;
+  color: #d8ebff;
   font-size: 13px;
   line-height: 1.3;
+  border-radius: ${radii.sm};
+  padding: 5px 6px;
+
   &:hover {
-    text-decoration: underline;
+    background-color: ${colors.sidebarHover};
+    color: ${colors.textInverse};
+  }
+
+  &:focus-visible {
+    outline: 2px solid ${colors.focus};
+    outline-offset: 2px;
   }
 `;
 

@@ -45,6 +45,14 @@ describe('Video and Thumbnail Endpoints', () => {
     }
   });
 
+  it('allows the dev client to fetch the catalog', async () => {
+    await request(app)
+      .get('/catalog')
+      .set('Origin', 'http://127.0.0.1:3000')
+      .expect('access-control-allow-origin', 'http://127.0.0.1:3000')
+      .expect(200);
+  });
+
   it('returns 404 for a missing video file', async () => {
     await request(app)
       .get('/video')

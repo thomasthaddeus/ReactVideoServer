@@ -1,6 +1,7 @@
 {
   "name": "my-react-video-server-client",
   "version": "0.2.0",
+  "type": "module",
   "private": true,
   "dependencies": {
     "@emotion/react": "^11.14.0",
@@ -9,11 +10,13 @@
     "web-vitals": "^5.2.0"
   },
   "scripts": {
-    "start": "vite",
-    "build": "vite build",
-    "preview": "vite preview",
-    "test:client": "vitest run",
-    "test": "vitest run"
+    "start": "npm run dev",
+    "dev": "vite --configLoader native",
+    "clean": "node ../scripts/clean-client-dist.mjs",
+    "build": "vite build --configLoader native --emptyOutDir false",
+    "preview": "vite preview --configLoader native",
+    "test:client": "vitest run --configLoader native --pool=threads",
+    "test": "vitest run --configLoader native --pool=threads"
   },
   "browserslist": {
     "production": [

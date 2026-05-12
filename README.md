@@ -20,34 +20,58 @@ Keep large media, generated catalogs, Python environments, and server-owned docu
 From the repository root:
 
 ```powershell
-npm run dev
+npm start
 ```
 
 Runs the Express server and the Vite client together.
 
 ```powershell
-npm run server
-npm run client
+npm run dev
+```
+
+Equivalent to `npm start`; useful when you want to be explicit about development mode.
+
+```powershell
+npm run dev:server
+npm run dev:client
 ```
 
 Runs either side individually.
 
-From `client`:
-
 ```powershell
+npm run clean
 npm run build
+npm run preview
 npm test
 ```
 
-Builds the client and runs client tests.
-
-From `server`:
+Cleans generated client output, builds the client, previews the production client build, and runs the full test suite.
 
 ```powershell
-npm test
+npm run ci
 ```
 
-Runs server route tests.
+Runs the local build and test checks in one command.
+
+```powershell
+npm run test:client
+npm run test:server
+```
+
+Runs either test suite individually.
+
+```powershell
+npm run generate:catalog
+```
+
+Regenerates the server media catalog.
+
+The older convenience aliases still work:
+
+```powershell
+npm run server
+npm run client
+```
 
 ## Environment
 

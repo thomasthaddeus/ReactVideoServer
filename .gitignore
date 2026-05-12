@@ -208,6 +208,7 @@ VIDEO_TS/
 .vscode/
 node_modules/
 videos/
-docs/
+docs/notes/
 thumbnails/
-scripts/
+.vite-cache/
+server/media/docs/
