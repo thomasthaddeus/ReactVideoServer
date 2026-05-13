@@ -3,7 +3,7 @@ import react from '@vitejs/plugin-react';
 
 export default defineConfig({
   envDir: '..',
-  cacheDir: '../.vite-cache/client',
+  cacheDir: process.env.VITE_CACHE_DIR || '../.vite-cache/client',
   plugins: [react()],
   server: {
     host: '127.0.0.1',
