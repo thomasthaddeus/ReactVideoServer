@@ -60,10 +60,37 @@ describe('Video and Thumbnail Endpoints', () => {
       .expect(404);
   });
 
+  it('rejects path traversal attempts for video files', async () => {
+    await request(app)
+      .get('/video')
+      .query({ video: '../catalog.json' })
+      .expect(400);
+  });
+
   it('returns 404 for a missing thumbnail file', async () => {
     await request(app)
       .get('/thumbnail')
       .query({ video: 'non-existent.png' })
       .expect(404);
+  });
+
+  it('rejects path traversal attempts for thumbnail files', async () => {
+    await request(app)
+      .get('/thumbnail')
+      .query({ video: '..\\catalog.json' })
+      .expect(400);
+  });
+
+  it('rate limits repeated media route requests', async () => {
+    let statusCode = 200;
+
+    for (let requestCount = 0; requestCount < 130 && statusCode !== 429; requestCount += 1) {
+      const response = await request(app).get('/catalog');
+      statusCode = response.statusCode;
+    }
+
+    if (statusCode !== 429) {
+      throw new Error('Expected media routes to return 429 under repeated requests');
+    }
   });
 });

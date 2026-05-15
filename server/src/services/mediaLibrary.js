@@ -1,9 +1,33 @@
 const fs = require('fs');
 const path = require('path');
 
+const mediaFileNamePattern = /^[A-Za-z0-9][A-Za-z0-9 ._&()+-]*\.[A-Za-z0-9]+$/;
+
 function isInside(parent, child) {
   const relativePath = path.relative(parent, child);
   return relativePath && !relativePath.startsWith('..') && !path.isAbsolute(relativePath);
+}
+
+function normalizeRequestedMediaPath(requestedPath) {
+  if (typeof requestedPath !== 'string') {
+    return null;
+  }
+
+  const fileName = requestedPath.trim();
+
+  if (
+    fileName.length === 0
+    || fileName.length > 255
+    || fileName.includes('\0')
+    || fileName.includes('/')
+    || fileName.includes('\\')
+    || fileName !== path.basename(fileName)
+    || !mediaFileNamePattern.test(fileName)
+  ) {
+    return null;
+  }
+
+  return fileName;
 }
 
 function findByBasename(rootDir, fileName) {
@@ -33,20 +57,22 @@ function findByBasename(rootDir, fileName) {
 }
 
 function resolveMediaFile(rootDir, requestedPath) {
-  if (!requestedPath) {
+  const fileName = normalizeRequestedMediaPath(requestedPath);
+
+  if (!fileName) {
     return null;
   }
 
-  const normalizedRequest = path.normalize(requestedPath);
-  const directPath = path.resolve(rootDir, normalizedRequest);
+  const directPath = path.join(rootDir, fileName);
 
   if (isInside(rootDir, directPath) && fs.existsSync(directPath)) {
     return directPath;
   }
 
-  return findByBasename(rootDir, path.basename(normalizedRequest));
+  return findByBasename(rootDir, fileName);
 }
 
 module.exports = {
+  normalizeRequestedMediaPath,
   resolveMediaFile,
 };
