@@ -10,7 +10,7 @@
     "test": "mocha test/**/*.test.js"
   },
   "dependencies": {
-    "dotenv": "^17.4.2",
+    "dotenv": "^18.0.1",
     "express": "^5.2.1",
     "express-rate-limit": "^8.5.2",
     "video-server-stack": "file:.."
